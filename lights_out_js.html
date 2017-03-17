@@ -1,0 +1,190 @@
+<script>
+
+    NUM_ROWS = 5;
+    NUM_COLS = 5;
+
+    function setLevel(level) {
+        clearBoard();
+
+        if (level == 1) {
+            document.lightsform.elements['1_2'].checked = 1;
+            document.lightsform.elements['2_1'].checked = 1;
+            document.lightsform.elements['2_2'].checked = 1;  
+            document.lightsform.elements['2_3'].checked = 1;  
+            document.lightsform.elements['3_2'].checked = 1;  
+        }
+        if (level == 2) {
+            document.lightsform.elements['1_0'].checked = 1;
+            document.lightsform.elements['1_4'].checked = 1;
+            document.lightsform.elements['2_0'].checked = 1;  
+            document.lightsform.elements['2_1'].checked = 1;  
+            document.lightsform.elements['2_3'].checked = 1;  
+            document.lightsform.elements['2_4'].checked = 1;  
+            document.lightsform.elements['3_0'].checked = 1;  
+            document.lightsform.elements['3_4'].checked = 1;  
+
+        }
+        if (level == 3) {
+            document.lightsform.elements['0_3'].checked = 1;
+            document.lightsform.elements['0_4'].checked = 1;
+            document.lightsform.elements['1_2'].checked = 1;  
+            document.lightsform.elements['1_4'].checked = 1;  
+            document.lightsform.elements['2_1'].checked = 1;  
+            document.lightsform.elements['2_2'].checked = 1;  
+            document.lightsform.elements['2_3'].checked = 1;  
+            document.lightsform.elements['3_0'].checked = 1;  
+            document.lightsform.elements['3_2'].checked = 1;  
+            document.lightsform.elements['4_0'].checked = 1;  
+            document.lightsform.elements['4_1'].checked = 1;  
+        }
+
+    }
+
+    function getXYCoordsFromLight(light) {
+        var res = light.split("_");
+
+        var x = parseInt(res[0]);
+        var y = parseInt(res[1]);    
+
+        return [x,y]; 
+    }
+
+    function getLightFromXYCoords(x, y) {
+        return ( x.toString() + "_" + y.toString() );
+    }
+
+    function turnLightOff(light) {
+        document.lightsform.elements[light].checked = 0;
+    }
+
+    function turnLightOn(light) {
+        document.lightsform.elements[light].checked = 1;
+    }
+
+    function isLightOn(light) {
+        return document.lightsform.elements[light].checked == 1;
+    }
+
+    function toggleLight(light) {
+        if (isLightOn(light)) {
+            turnLightOff(light);
+        }
+        else {
+            turnLightOn(light); 
+        }
+    }
+
+    function clearBoard() {
+        for(var x = 0; x < NUM_ROWS; x++) {
+            for(var y = 0; y < NUM_COLS; y++) {
+                light = x.toString() + "_" + y.toString();            
+                turnLightOff(light);
+            }
+        }
+    }
+
+    function fillBoard() {
+        for(var x = 0; x < NUM_ROWS; x++) {
+            for(var y = 0; y < NUM_COLS; y++) {
+                light = x.toString() + "_" + y.toString();            
+                turnLightOn(light);
+            }
+        }
+    }
+
+    function isLightOutOfBounds(light) {
+        coords = getXYCoordsFromLight(light); 
+        var x = coords[0];
+        var y = coords[1]; 
+
+        return ( x >= NUM_ROWS || x < 0 || y >= NUM_COLS || y < 0 );   
+    }
+
+    function isLightOn(light) {    
+        return (document.lightsform.elements[light].checked == 1);
+    }
+
+    function lightPressed(light) {
+        coords = getXYCoordsFromLight(light);
+
+        var x = coords[0];
+        var y = coords[1]; 
+
+        var top = x - 1;
+        var bot = x + 1;
+        var left = y - 1;
+        var right = y + 1; 
+
+        top_y = getLightFromXYCoords(top, y); 
+        if ( !isLightOutOfBounds( top_y ) ) {
+            toggleLight( top_y );  
+        }
+
+        bot_y = getLightFromXYCoords(bot, y); 
+        if ( !isLightOutOfBounds(bot_y) ) {
+            toggleLight(bot_y); 
+        }
+
+        x_left = getLightFromXYCoords(x, left); 
+        if ( !isLightOutOfBounds(x_left) ) {
+            toggleLight(x_left); 
+        }
+
+        x_right = getLightFromXYCoords(x, right); 
+        if ( !isLightOutOfBounds(x_right) ) {
+            toggleLight(x_right); 
+        }
+
+        if (checkVictory()) {
+            alert("\nYou Won!!\n");
+        }
+
+    }
+
+    function checkVictory() {
+        for(var x = 0; x < NUM_ROWS; x++) {
+            for(var y = 0; y < NUM_COLS; y++) {
+                light = getLightFromXYCoords(x, y);
+                if ( isLightOn(light) ) {
+                    return false;
+                }
+            }
+        }
+        return true;         
+    }
+
+    function makeTableHTML() {
+        var result = '<table colspec="' + Array(NUM_COLS).join("120") + '" border = 7 ';
+        for (var x = 0; x < NUM_ROWS; x++) {
+            result += "<tr>";
+            for (var y = 0; y < NUM_COLS; y++) {
+                result += "<td><input type=checkbox name=" + x.toString() + "_" + y.toString() + " onClick='lightPressed(name)'></td>";  
+            }
+            result += "</tr>";
+        }
+
+        result += "</table>";
+        return result;
+    }
+            
+</script>
+
+<body>
+    <center>
+        <form name=lightsform>
+            <script>
+                document.write(makeTableHTML());
+            </script>
+            <table border=1>
+                <tr>
+                    <td><a href="javascript:setLevel(1)">Level 1</a></td>                    
+                    <td><a href="javascript:setLevel(2)">Level 2</a></td>
+                    <td><a href="javascript:setLevel(3)">Level 3</a></td>
+                    <td><input type="reset" value="clear"></td>
+                </tr>
+
+            </table>            
+        </form>
+    </center>
+</body>
+
