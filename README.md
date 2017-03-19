@@ -11,7 +11,7 @@ A very basic implementation of Lights Out.
 By altering the `NUM_ROWS` and `NUM_COLS`, it's possible to change the board to any desired size like so.
 ![Expanded 10-by-10 board](http://imgur.com/gsXh1u6.png)
 
-More information on the game can be found here
+More information on the game can be found <a href="http://vprusso.github.io/blog/2017/the-mathematics-of-lights-out/">here</a>
 
 
          
